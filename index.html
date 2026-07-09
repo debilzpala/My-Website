@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NeoNCraf – Serwer Minecraft</title>
+  <title>LimonkaMC – Serwer Minecraft</title>
   <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Minecraft', 'Inter', sans-serif; }
@@ -85,7 +85,6 @@
       position:fixed; inset:0; background:#050816;
       display:flex; align-items:center; justify-content:center;
       z-index:999; font-size:1.2rem;
-      animation: fadeOut 1s forwards; animation-delay:2s;
     }
     .loader { animation: pulse 1.2s infinite; }
     @keyframes pulse { 0%{opacity:.3} 50%{opacity:1} 100%{opacity:.3} }
@@ -94,25 +93,33 @@
   </style>
 </head>
 <body>
-<div id="preloader"><div class="loader">Ładowanie strony NeoNCraf...</div></div>
+<div id="preloader"><div class="loader">Ładowanie Strony...</div></div>
 <canvas id="particles"></canvas>
-<div class="toggle" onclick="toggleTheme()">🌙</div>
-<div class="toggle" style="top:80px" onclick="toggleLang()">🌍</div>🌙</div>
+<div id="themeToggle" class="toggle" onclick="toggleTheme()">🌙</div>
+<div id="langToggle" class="toggle" style="top:80px" onclick="toggleLang()">🌍</div>🌙</div>
 <canvas id="particles"></canvas>
 <div class="toggle" onclick="toggleTheme()">🌙</div>
 
 <header>
-  <h1 data-pl="NeoNCraf" data-en="NeoNCraf">NeoNCraf</h1>
+  <h1 data-pl="LimonkaMC" data-en="LimonkaMC">NeoNCraf</h1>
   <p data-pl="Nowoczesny serwer Minecraft nowej generacji." data-en="A modern next-generation Minecraft server.">
     Nowoczesny serwer Minecraft nowej generacji.
   </p>
   <div class="btns">
-    <a href="#" class="btn primary" onclick="copyIP()">Skopiuj IP serwera</a>
-    <a id="mcBtn" href="mc://connect/NeoNCraf_Mc.aternos.me:34490"
-    <a href="https://discord.gg/ek5gNvRF" target="_blank" class="btn secondary">Discord</a>
- 
+    <a href="limonkamc.aternos.me" class="btn primary" onclick="copyIP()">Skopiuj IP serwera</a>
+    <a id="mcBtn" href="mc://connect/limonkamc.aternos.me" class="btn primary">🎮 Otwórz Minecraft</a>
+    <a href="https://discord.gg/Ty9axmj8" target="_blank" class="btn secondary">Discord</a>
   </div>
-  <p class="ip">IP: <span id="ip">NeoNCraf_Mc.aternos.me:34490</span></p>
+  <div style="margin-top:20px">
+    <label for="version">🧱 Wersja gry:</label>
+    <select id="version" onchange="setVersion()" style="margin-left:10px; padding:6px 10px; border-radius:10px;">
+      <option>1.20.4</option>
+      <option>1.20.2</option>
+      <option>1.19.4</option>
+      <option>1.18.2</option>
+    </select>
+  </div>
+  <p class="ip">IP: <span id="ip">Limonkamc.aternos.me</span></p>
 </header>
 
 <section>
@@ -124,10 +131,16 @@
     <p id="percent">-</p>
     <div class="creeper"></div>
   </div>
+  </div>
+  <div class="card" style="text-align:center; margin-bottom:40px">
+    <h3>📊 Status serwera</h3>
+    <p id="status">Sprawdzanie...</p>
+    <p>👥 Gracze online: <span id="players">-</span></p>
+  </div>
   <div class="features">
     <div class="card">
       <h3>⚡ Wydajność</h3>
-      <p>Stabilny serwer, niski ping i brak lagów – gramy płynnie 24/7.</p>
+      <p>Stabilny serwer, niski ping i brak lagów – gramy płynnie.</p>
     </div>
     <div class="card">
       <h3>🧩 Unikalne tryby</h3>
@@ -145,7 +158,7 @@
 </section>
 
 <footer>
-  © 2025 NeoNCraf • Serwer Minecraft
+  © 2025 Limonkamc • Serwer Minecraft
 </footer>
 <div id="toast" class="toast">🟢 Serwer ONLINE</div>
 
@@ -155,6 +168,10 @@
     navigator.clipboard.writeText(ip);
     alert('IP skopiowane: ' + ip);
   }
+window.addEventListener('load',()=>{
+    const p=document.getElementById('preloader');
+    if(p){ p.style.display='none'; }
+  });
 </script>
 <script>
   function toggleTheme(){ document.body.classList.toggle('light'); }
@@ -168,7 +185,7 @@
   // MC server status
   let lastOnline=true;
   function fetchStatus(){
-    fetch('https://api.mcstatus.io/v2/status/java/NeoNCraf_Mc.aternos.me')
+    fetch('https://api.mcstatus.io/v2/status/java/limonkamc.aternos.me')
       .then(r=>r.json())
       .then(d=>{
         const online=d.players.online, max=d.players.max;
@@ -202,6 +219,11 @@ Serwer jest aktualnie wyłączony.'
 
 (fetchStatus,20000);
 
+  function setVersion(){
+    const v=document.getElementById('version').value;
+    document.getElementById('mcBtn').innerText='🎮 Otwórz Minecraft ('+v+')';
+  }
+
   // toast
   const t=document.getElementById('toast'); setTimeout(()=>t.classList.add('show'),800);
 
@@ -211,6 +233,7 @@ Serwer jest aktualnie wyłączony.'
   function toggleLang(){
     lang = lang==='pl'?'en':'pl';
     applyLang();
+  console.log('Language set to', lang);
   }
   function applyLang(){
     document.querySelectorAll('[data-pl]').forEach(e=>{
